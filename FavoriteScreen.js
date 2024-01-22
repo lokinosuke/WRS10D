@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { View, FlatList, Pressable, Image, Text } from 'react-native';
 import { StyleSheet } from 'react-native';
 import useFavorites from './useFavorites';
+import { useIsFocused } from '@react-navigation/native';
 
 const FavoriteScreen = ({ navigation }) => {
   const { favorites } = useFavorites();
   const [favoriteMovies, setFavoriteMovies] = useState([]);
-
+  const isFocused = useIsFocused();
   useEffect(() => {
     const fetchFavoriteMovies = async () => {
       // Fetch details of each favorite movie using the movie ID
@@ -23,7 +24,9 @@ const FavoriteScreen = ({ navigation }) => {
     };
 
     fetchFavoriteMovies();
-  }, [favorites]);
+  }, [favorites, isFocused]);
+
+console.log(favoriteMovies);
 
   return (
     <View style={styles.container}>
