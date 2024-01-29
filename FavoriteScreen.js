@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Pressable, Image, Text } from 'react-native';
-import { StyleSheet } from 'react-native';
+import { View, FlatList, Pressable, Image, Text, StyleSheet, Dimensions } from 'react-native';
 import useFavorites from './useFavorites';
 import { useIsFocused } from '@react-navigation/native';
+
+const { width } = Dimensions.get('window');
+const itemWidth = (width - 32) / 4;
+const spacing = 8;
 
 const FavoriteScreen = ({ navigation }) => {
   const { favorites } = useFavorites();
@@ -26,8 +29,6 @@ const FavoriteScreen = ({ navigation }) => {
     fetchFavoriteMovies();
   }, [favorites, isFocused]);
 
-console.log(favoriteMovies);
-
   return (
     <View style={styles.container}>
       <FlatList
@@ -44,9 +45,9 @@ console.log(favoriteMovies);
             />
           </Pressable>
         )}
+        contentContainerStyle={styles.flatListContent}
         ListEmptyComponent={() => <Text style={styles.emptyText}>No favorites yet!</Text>}
-        horizontal={true} // Set this to true for horizontal display
-        showsHorizontalScrollIndicator={false} // Optional: to hide the horizontal scroll indicator
+        numColumns={4}
       />
     </View>
   );
@@ -57,29 +58,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF', // Change background color if needed
+    backgroundColor:'rgb(24 28 33)',
     padding: 20,
   },
-  movieContainer: {
-    marginRight: 20, // Adjust as needed for spacing between movies
-    alignItems: 'center',
-  },
+
   movieImage: {
-    width: 100,
-    height: 150,
-    marginBottom: 10,
-    borderRadius: 5,
-  },
-  movieTitle: {
-    textAlign: 'center',
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  emptyText: {
-    fontSize: 18,
-    color: '#555',
-  },
+    width: itemWidth - spacing * 2,
+    height: itemWidth * 1.5 - spacing * 2,
+    borderRadius: 8,
+    padding: 5,
+    margin: 5,
+    },
+
 });
 
 export default FavoriteScreen;
