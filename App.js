@@ -1,89 +1,182 @@
-import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, FlatList, SafeAreaView, Dimensions, Button } from 'react-native';
+// app.js
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { TouchableOpacity, View } from 'react-native';
+import MoviesScreen from './MoviesScreen';
+import DetailsScreen from './DetailsScreen';
+import FavoriteScreen from './FavoriteScreen';
+import SearchScreen from './SearchScreen';
+import ProfilScreen from './ProfilScreen';
 
-const { width } = Dimensions.get('window');
-const itemWidth = (width - 32) / 4; // Adjust the width as needed
-const spacing = 8; // Adjust the spacing as needed
+const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
 
-export default function App() {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState([]);
-  const [page, setPage] = useState(1); 
-  const [numColumns] = useState(4);
-
-  const url = `https://api.themoviedb.org/3/movie/popular?api_key=ed9fb3b24c6dda41ce9b077a7120897d&language=en&page=${page}`;
-
-  const fetchData = (url) => {
-    setLoading(true);
-    fetch(url)
-      .then((resp) => resp.json())
-      .then((json) => setData(json.results))
-      .catch((error) => console.error(error))
-      .finally(() => setLoading(false));
-  };
-
-  useEffect(() => {
-    fetchData(url);
-  }, [page]);
-  
+function HomeStack() {
   return (
-    <SafeAreaView style={styles.container}>
-      <FlatList
-        key={numColumns} // Change the key prop when numColumns changes
-        data={data}
-        keyExtractor={(item) => item.id.toString()}
-        numColumns={numColumns}
-        renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Image
-              source={{ uri: `https://image.tmdb.org/t/p/w500${item.poster_path}` }}
-              style={{ width: itemWidth - spacing, height: itemWidth * 1.5 - spacing }}
-            />
-          </View>
-        )}
-        ListEmptyComponent={() => <Text>Loading...</Text>}
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Movies"
+        component={MoviesScreen}
+        options={{
+          headerStyle: { backgroundColor: 'rgb(0, 0, 0)' }, // Set background color of the top navigation bar
+          headerTintColor: '#fff', // Set text color of the top navigation bar
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }}
       />
-      <View style={styles.buttonContainer}>
-        <Button
-          onPress={() => setPage((prevPage) => Math.max(prevPage - 1, 1))}
-          title="Prev Page"
-          disabled={page === 1} // Disable button if on the first page
-        />
-        <Button
-          onPress={() => setPage((prevPage) => prevPage + 1)}
-          title="Next Page"
-        />
-      </View>
-    </SafeAreaView>
+<Stack.Screen
+  name="Details"
+  component={DetailsScreen}
+  options={({ navigation }) => ({
+    headerTransparent: true,
+    headerTitle: '',
+    headerBackTitleVisible: false,
+    headerLeft: () => (
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ paddingLeft: 15 }} // Add padding to the left of the TouchableOpacity
+      >
+        <View
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Low opacity black background
+            padding: 10, // Add padding to the icon
+            borderRadius: 25, // Optional: Add border radius for rounded corners
+          }}
+        >
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </View>
+      </TouchableOpacity>
+    ),
+  })}
+/>
+
+    </Stack.Navigator>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    marginHorizontal: 16,
-  },
-  item: {
-    flex: 1,
-    marginTop: spacing,
-    marginBottom: spacing,
-    marginRight: spacing,
-    alignContent: 'center',
-    alignItems: 'center',
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginTop: 16,
-  },
-  title: {
-    textAlign: 'center',
-    marginVertical: 8,
-  },
-  separator: {
-    marginVertical: 8,
-    borderBottomColor: '#737373',
-    borderBottomWidth: StyleSheet.hairlineWidth,
-  },
-});
+function SearchStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Search" component={SearchScreen}
+      options={{
+          headerStyle: { backgroundColor: 'rgb(0, 0, 0)' }, // Set background color of the top navigation bar
+          headerTintColor: '#fff', // Set text color of the top navigation bar
+          headerTitleStyle: {
+            fontWeight: 'bold',
+          },
+        }} />
+      <Stack.Screen
+  name="Details"
+  component={DetailsScreen}
+  options={({ navigation }) => ({
+    headerTransparent: true,
+    headerTitle: '',
+    headerBackTitleVisible: false,
+    headerLeft: () => (
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ paddingLeft: 15 }} // Add padding to the left of the TouchableOpacity
+      >
+        <View
+          style={{
+            backgroundColor: 'rgba(0, 0, 0, 0.5)', // Low opacity black background
+            padding: 10, // Add padding to the icon
+            borderRadius: 25, // Optional: Add border radius for rounded corners
+          }}
+        >
+          <Ionicons name="chevron-back" size={24} color="white" />
+        </View>
+      </TouchableOpacity>
+    ),
+  })}
+/>
+          </Stack.Navigator>
+  );
+}
+
+function App() {
+  return (
+<NavigationContainer>
+  <Tab.Navigator
+    screenOptions={{
+      tabBarStyle: { 
+        backgroundColor: 'rgb(68 84 102)',
+        paddingVertical: 8,
+      },
+    }}
+  >
+    <Tab.Screen
+      name="Home"
+      component={HomeStack}
+      options={({ route }) => ({
+        tabBarLabel: '',
+        headerShown: false,
+        tabBarIcon: ({ color, size, focused }) => (
+          <Ionicons
+            name="copy-outline"
+            color={focused ? 'rgb(65 188 244)' : 'rgb(170 187 204)'}
+            size={size}
+          />
+        ),
+      })}
+    />
+    <Tab.Screen
+      name="Recherche"
+      component={SearchStack}
+      options={({ route }) => ({
+        tabBarLabel: '',
+        headerShown: false,
+        tabBarIcon: ({ color, size, focused }) => (
+          <Ionicons
+            name="search"
+            color={focused ? 'rgb(65 188 244)' : 'rgb(170 187 204)'}
+            size={size}
+          />
+        ),
+      })}
+    />
+    <Tab.Screen
+      name="Watchlist"
+      component={FavoriteScreen}
+      options={({ route }) => ({
+        tabBarLabel: '',
+        headerStyle: { backgroundColor: 'rgb(0 0 0)' },
+        headerTintColor: '#fff',
+        tabBarIcon: ({ color, size, focused }) => (
+          <Ionicons
+            name="heart"
+            color={focused ? 'rgb(65 188 244)' : 'rgb(170 187 204)'}
+            size={size}
+          />
+        ),
+      })}
+    />
+    <Tab.Screen
+    name="Profil"
+    component={ProfilScreen}
+    options={({ route }) => ({
+      tabBarLabel: '',
+      headerStyle: { backgroundColor: 'rgb(0 0 0)' },
+      headerTintColor: '#fff',
+      tabBarIcon: ({ color, size, focused }) => (
+        <Ionicons
+          name="person"
+          color={focused ? 'rgb(65 188 244)' : 'rgb(170 187 204)'}
+          size={size}
+        />
+      ),
+    })}
+  />
+  </Tab.Navigator>
+</NavigationContainer>
+
+
+
+  );
+}
+
+export default App;
