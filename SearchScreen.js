@@ -63,7 +63,7 @@ const SearchScreen = ({ navigation }) => {
 />
 
       ) : (
-        <Text>No results found</Text>
+        <Text style={styles.notFound}>No results found</Text>
       )}
     </SafeAreaView>
   );
@@ -89,6 +89,10 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     color: 'white',
   },
+  notFound: {
+    color: 'gray',
+    textAlign: 'center',
+  },  
   searchIcon: {
     marginRight: 8,
   },
